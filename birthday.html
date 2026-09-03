@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Surprise For You</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    overflow-y: auto;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #aee1f9 0%, #cdeeff 35%, #ffe9c7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .sky-decor {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .cloud {
+    position: absolute;
+    background: #ffffff;
+    border-radius: 50px;
+    opacity: 0.85;
+  }
+  .cloud::before, .cloud::after {
+    content: "";
+    position: absolute;
+    background: #ffffff;
+    border-radius: 50%;
+  }
+  .cloud1 { width: 90px; height: 30px; top: 8%; left: 10%; }
+  .cloud1::before { width: 45px; height: 45px; top: -22px; left: 10px; }
+  .cloud1::after { width: 35px; height: 35px; top: -15px; left: 45px; }
+  .cloud2 { width: 70px; height: 25px; top: 18%; right: 12%; }
+  .cloud2::before { width: 35px; height: 35px; top: -17px; left: 8px; }
+  .cloud2::after { width: 28px; height: 28px; top: -12px; left: 32px; }
+  .cloud3 { width: 60px; height: 20px; bottom: 15%; left: 8%; }
+  .cloud3::before { width: 28px; height: 28px; top: -13px; left: 6px; }
+  .cloud3::after { width: 22px; height: 22px; top: -9px; left: 26px; }
+
+  .rainbow-arc {
+    position: absolute;
+    bottom: -140px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    height: 210px;
+    border-radius: 210px 210px 0 0;
+    border: 14px solid transparent;
+    border-top-color: #ff6b6b;
+    box-shadow:
+      inset 0 0 0 14px #ffa94d,
+      inset 0 0 0 28px #ffe066,
+      inset 0 0 0 42px #69db7c,
+      inset 0 0 0 56px #66d9e8,
+      inset 0 0 0 70px #b197fc;
+    opacity: 0.5;
+  }
+
+  .page, .choice-buttons { position: relative; z-index: 1; }
+
+  .pony {
+    width: 140px;
+    height: auto;
+  }
+
+  .page {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 30px;
+    text-align: center;
+    animation: fadeIn 0.8s ease;
+  }
+
+  .page.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* PAGE 1 */
+  #page1 .envelope {
+    font-size: 80px;
+    cursor: pointer;
+    animation: bounce 2s infinite;
+    transition: transform 0.3s;
+  }
+  #page1 .envelope:hover { transform: scale(1.15); }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  #page1 p {
+    margin-top: 25px;
+    font-size: 1.3em;
+    color: #4d7ea8;
+    font-weight: 600;
+  }
+
+  /* PAGE 2 */
+  #page2 h1 {
+    color: #4d7ea8;
+    font-size: 1.8em;
+    margin-bottom: 40px;
+  }
+
+  .choice-buttons {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .choice-buttons button {
+    padding: 18px 40px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  }
+
+  #rayneBtn {
+    background: linear-gradient(135deg, #ffd43b, #ffa94d);
+    color: #5c3d00;
+  }
+
+  #notRayneBtn {
+    background: #ffffff;
+    color: #4dabf7;
+  }
+
+  .choice-buttons button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+
+  /* PAGE 3 - Rayne */
+  #page3 h1 {
+    color: #f08c00;
+    font-size: 2.2em;
+    margin-bottom: 15px;
+  }
+
+  #page3 .cake {
+    font-size: 70px;
+    margin: 10px 0;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  #page3 .message {
+    max-width: 500px;
+    background: rgba(255,255,255,0.75);
+    border-radius: 20px;
+    padding: 25px 30px;
+    color: #5c2a45;
+    font-size: 1.15em;
+    line-height: 1.6;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    margin-top: 15px;
+  }
+
+  .photo-gallery {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 25px;
+    max-width: 500px;
+  }
+
+  .photo-slot {
+    width: 160px;
+    height: 200px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    border: 3px solid white;
+  }
+
+  .photo-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #seeMoreBtn {
+    margin-top: 22px;
+    padding: 12px 30px;
+    font-size: 1em;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    background: linear-gradient(135deg, #66d9e8, #4dabf7);
+    color: white;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  #seeMoreBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+
+  .more-text {
+    margin-top: 18px;
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #f08c00;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.6s ease;
+  }
+  .more-text.shown {
+    opacity: 1;
+    max-height: 100px;
+  }
+
+  /* PAGE 4 - Not Rayne */
+  #page4 {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    width: 100%;
+    min-height: 100vh;
+    color: #ecf0f1;
+  }
+  #page4 .moon { font-size: 70px; margin-bottom: 20px; }
+  #page4 h1 { font-size: 2em; }
+
+  .confetti {
+    position: fixed;
+    top: -10px;
+    font-size: 20px;
+    animation: fall linear forwards;
+    pointer-events: none;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(360deg); opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="sky-decor">
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="cloud cloud3"></div>
+    <div class="rainbow-arc"></div>
+  </div>
+
+  <!-- PAGE 1: Click to open -->
+  <div class="page active" id="page1">
+    <svg class="pony" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="60" y="150" width="14" height="35" rx="6" fill="#ffd43b"/>
+      <rect x="120" y="150" width="14" height="35" rx="6" fill="#ffd43b"/>
+      <ellipse cx="100" cy="130" rx="55" ry="38" fill="#ffe066"/>
+      <path d="M45 120 q-25 10 -15 45 q15 -5 20 -25 q5 15 -5 30 q15 0 20 -20 Z" fill="#4dabf7"/>
+      <circle cx="150" cy="95" r="30" fill="#ffe066"/>
+      <path d="M135 70 l8 -18 l10 14 Z" fill="#ffe066"/>
+      <path d="M165 70 l-4 -18 l14 10 Z" fill="#ffe066"/>
+      <path d="M125 78 q10 -25 35 -20 q-5 15 -20 20 q10 5 15 15 q-15 5 -25 -5 q5 10 0 18 q-12 -5 -12 -18 Z" fill="#4dabf7"/>
+      <circle cx="158" cy="93" r="4" fill="#333"/>
+      <path d="M150 105 q8 6 16 0" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M85 130 l4 8 l9 1 l-7 6 l2 9 l-8 -5 l-8 5 l2 -9 l-7 -6 l9 -1 Z" fill="#ffffff" opacity="0.85"/>
+    </svg>
+    <div class="envelope" onclick="goTo('page2')">💌</div>
+    <p>Tap the envelope to open</p>
+  </div>
+
+  <!-- PAGE 2: Choice -->
+  <div class="page" id="page2">
+    <h1>Are you Rayne?</h1>
+    <div class="choice-buttons">
+      <button id="rayneBtn" onclick="chooseRayne()">Rayne</button>
+      <button id="notRayneBtn" onclick="goTo('page4')">Not Rayne</button>
+    </div>
+  </div>
+
+  <!-- PAGE 3: Rayne - birthday wishes -->
+  <div class="page" id="page3">
+    <svg class="pony" style="width:170px" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="60" y="150" width="14" height="35" rx="6" fill="#ffd43b"/>
+      <rect x="120" y="150" width="14" height="35" rx="6" fill="#ffd43b"/>
+      <ellipse cx="100" cy="130" rx="55" ry="38" fill="#ffe066"/>
+      <path d="M45 120 q-25 10 -15 45 q15 -5 20 -25 q5 15 -5 30 q15 0 20 -20 Z" fill="#4dabf7"/>
+      <circle cx="150" cy="95" r="30" fill="#ffe066"/>
+      <path d="M135 70 l8 -18 l10 14 Z" fill="#ffe066"/>
+      <path d="M165 70 l-4 -18 l14 10 Z" fill="#ffe066"/>
+      <path d="M125 78 q10 -25 35 -20 q-5 15 -20 20 q10 5 15 15 q-15 5 -25 -5 q5 10 0 18 q-12 -5 -12 -18 Z" fill="#4dabf7"/>
+      <circle cx="158" cy="93" r="4" fill="#333"/>
+      <path d="M150 105 q8 6 16 0" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M85 130 l4 8 l9 1 l-7 6 l2 9 l-8 -5 l-8 5 l2 -9 l-7 -6 l9 -1 Z" fill="#ffffff" opacity="0.85"/>
+      <circle cx="40" cy="60" r="3" fill="#ffd43b"/>
+      <circle cx="170" cy="40" r="3" fill="#69db7c"/>
+      <circle cx="185" cy="90" r="2.5" fill="#4dabf7"/>
+    </svg>
+    <div class="cake">🎂</div>
+    <h1>Happy Birthday, Rayne!</h1>
+    <div class="message">
+      Wishing you the happiest of birthdays! 🎉 Hope your day is filled with
+      laughter, love, and every little thing that makes you smile.
+      Here's to another amazing year ahead — you deserve it all. 💕
+    </div>
+    <div class="photo-gallery">
+      <div class="photo-slot"><img src="photo1.jpg" alt="Rayne"></div>
+      <div class="photo-slot"><img src="photo2.jpg" alt="Rayne"></div>
+      <div class="photo-slot"><img src="photo3.jpg" alt="Rayne"></div>
+      <div class="photo-slot"><img src="photo4.jpg" alt="Rayne"></div>
+    </div>
+
+    <button id="seeMoreBtn" onclick="revealMore()">See more</button>
+    <div class="more-text" id="moreText">thank u by lia</div>
+  </div>
+
+  <!-- PAGE 4: Not Rayne -->
+  <div class="page" id="page4">
+    <div class="moon">🌙</div>
+    <h1>Go to sleep.</h1>
+  </div>
+
+<script>
+  function goTo(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function chooseRayne() {
+    goTo('page3');
+    launchConfetti();
+  }
+
+  function revealMore() {
+    document.getElementById('moreText').classList.add('shown');
+    document.getElementById('seeMoreBtn').style.display = 'none';
+  }
+
+  function launchConfetti() {
+    const emojis = ['🎉','🎈','✨','🎁','💖'];
+    for (let i = 0; i < 40; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.animationDuration = (2 + Math.random() * 2) + 's';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 4000);
+      }, i * 60);
+    }
+  }
+</script>
+
+</body>
+</html>
